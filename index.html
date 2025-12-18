@@ -2,6 +2,7 @@
 <html>
 <head>
   <title>D&D Combat Tracker</title>
+  <link rel="stylesheet" href="style.css">
   <style>
     body {
         background-color: #ffffff;
@@ -9,19 +10,34 @@
     }
   </style>
 </head>
+
 <body>
   <h1>Dungeons and Dragons Combat Tracker</h1>
-  <script src="src/main.js"></script>
+  <div class="modal-buttons">
+    <button onclick="openModal()">Begin Adding Combatants</button>
+    <button onclick="resetCombat()">Clear List</button>
+  </div>
 
-  //Need to figure out how modals work
+  <div id="combatant-list-container">
+  </div>
+
   <div id="myModal" class="modal-overlay">
+
     <div class="modal-content">
-      <h3>Enter Combatant Details:</h3>
-      <input type="text" placeholder="Name">
-      <button onclick="closeModal()">Close</button>
+
+      <h2>Enter Combatant Details:</h2>
+      <input type="text" placeholder="Name" id="nameBox">
+      <input type="number" placeholder="Initiative" id="initiativeBox">
+      <input type="number" placeholder="HP" id="hpBox">
+
+      <div class="modal-buttons">
+        <button onclick="addCombatant()">Add</button>
+        <button onclick="closeModal()">Close</button>
+      </div>
+
     </div>
   </div>
 
-  <button onclick="openModal()">Add Combatant</button>
+  <script src="src/main.js"></script>
 </body>
 </html>

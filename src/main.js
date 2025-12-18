@@ -12,6 +12,75 @@
 // If a combatant dies, it should either remove them or just put some sort of indicator
 // that they are dead, there should be a button that lets you end combat too
 
-function addCombatant(){
+let combatants = [];
 
+
+function openModal() {
+  const modal = document.getElementById('myModal');
+  modal.style.display = 'flex';
+  document.getElementById('nameBox').focus();
+}
+
+function clearInputs() {
+  document.getElementById('nameBox').value = "";
+  document.getElementById('initiativeBox').value = "";
+  document.getElementById('hpBox').value = "";
+}
+
+function closeModal() {
+  const modal = document.getElementById('myModal');
+  modal.style.display = 'none';
+  clearInputs()
+}
+
+
+/*
+   * Grab Data -> Create Object -> Add to List -> Sort -> Re-render.
+*/
+function addCombatant(){
+  const nameBox = document.getElementById('nameBox');
+  const initiativeBox = document.getElementById('initiativeBox');
+  const hpBox = document.getElementById('hpBox');
+
+  let name = nameBox.value;
+  let initiative = initiativeBox.value;
+  let hp = hpBox.value;
+
+  const person = {
+    name : name,
+    initiative : initiative,
+    hp : hp,
+  }
+
+  combatants.push(person);
+  combatants.sort((a,b) => a.initiative - b.initiative);
+  renderList();
+
+}
+
+function renderList(){
+  const container = document.getElementById('combatant-list-container');
+  container.innerHTML = "";
+
+  combatants.forEach((combatant) => {
+    const card = document.createElement('div');
+    card.className = 'combatant-card'; /* This assigns it to the CSS class so it knows how to style it*/
+    card.innerHTML = `
+        <strong>${combatant.name}:</strong>
+        <span>${combatant.hp}</span>
+        <span>${combatant.initiative}</span>
+    `;
+
+    container.appendChild(card);
+  })
+}
+
+function clearList(){
+  const container = document.getElementById('combatant-list-container');
+  container.innerHTML = "";
+}
+
+function resetCombat(){
+  combatants = [];
+  clearList();
 }
