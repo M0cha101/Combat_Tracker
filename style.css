@@ -10,11 +10,18 @@
     align-items: center;
 }
 
+.combat-modal {
+    margin-top: 15px;
+}
+
 .modal-content {
     position: fixed;
     top: 0;
     left: 50%;
+}
 
+.modal-buttons {
+    margin-top: 5px;
 }
 
 #combatant-list-container { /* This is the class for the container */

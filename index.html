@@ -12,23 +12,30 @@
 </head>
 
 <body>
+
   <h1>Dungeons and Dragons Combat Tracker</h1>
+
   <div class="modal-buttons">
     <button onclick="openModal()">Begin Adding Combatants</button>
     <button onclick="resetCombat()">Clear List</button>
   </div>
 
-  <div id="combatant-list-container">
+  <div id="startModal" class="combat-modal">
+    <button onclick="startCombat()">START COMBAT</button>
+  </div>
+
+  <div
+    id="combatant-list-container">
   </div>
 
   <div id="myModal" class="modal-overlay">
-
     <div class="modal-content">
 
       <h2>Enter Combatant Details:</h2>
       <input type="text" placeholder="Name" id="nameBox">
       <input type="number" placeholder="Initiative" id="initiativeBox">
       <input type="number" placeholder="HP" id="hpBox">
+      <input type="number" placeholder="AC" id="acBox">
 
       <div class="modal-buttons">
         <button onclick="addCombatant()">Add</button>
@@ -39,5 +46,6 @@
   </div>
 
   <script src="src/main.js"></script>
+
 </body>
 </html>

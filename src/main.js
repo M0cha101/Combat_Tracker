@@ -12,6 +12,7 @@
 // If a combatant dies, it should either remove them or just put some sort of indicator
 // that they are dead, there should be a button that lets you end combat too
 
+
 let combatants = [];
 
 
@@ -25,6 +26,7 @@ function clearInputs() {
   document.getElementById('nameBox').value = "";
   document.getElementById('initiativeBox').value = "";
   document.getElementById('hpBox').value = "";
+  document.getElementById('acBox').value = "";
 }
 
 function closeModal() {
@@ -41,34 +43,48 @@ function addCombatant(){
   const nameBox = document.getElementById('nameBox');
   const initiativeBox = document.getElementById('initiativeBox');
   const hpBox = document.getElementById('hpBox');
+  const acBox = document.getElementById('acBox');
 
   let name = nameBox.value;
   let initiative = initiativeBox.value;
   let hp = hpBox.value;
+  let ac = acBox.value;
 
-  const person = {
-    name : name,
-    initiative : initiative,
-    hp : hp,
+  let nameCheck = name.trim();
+
+  //Maybe could check to make sure that the init,hp, and AC are numbers as well?
+  if (nameCheck === ""){
+    alert("Please enter a name");
+  } else{
+    const person = {
+      name : name,
+      initiative : initiative,
+      hp : hp,
+      ac : ac,
+    }
+
+    combatants.push(person);
+    combatants.sort((a,b) => a.initiative - b.initiative);
+    renderList();
+
+    resetBoxes();
   }
-
-  combatants.push(person);
-  combatants.sort((a,b) => a.initiative - b.initiative);
-  renderList();
-
 }
 
 function renderList(){
   const container = document.getElementById('combatant-list-container');
   container.innerHTML = "";
 
-  combatants.forEach((combatant) => {
+  let reversedArray = combatants.reverse(); // Reverse the array so people with higher init are at the top
+
+  reversedArray.forEach((combatant) => {
     const card = document.createElement('div');
     card.className = 'combatant-card'; /* This assigns it to the CSS class so it knows how to style it*/
     card.innerHTML = `
         <strong>${combatant.name}:</strong>
-        <span>${combatant.hp}</span>
-        <span>${combatant.initiative}</span>
+        <span>Initiative: ${combatant.initiative}</span>
+        <span>HP: ${combatant.hp}</span>
+        <span>Ac: ${combatant.ac}</span>
     `;
 
     container.appendChild(card);
@@ -81,6 +97,27 @@ function clearList(){
 }
 
 function resetCombat(){
-  combatants = [];
-  clearList();
+
+  //Maybe we can make a custom one later that is not so jank but this works for now
+  let answer = window.confirm("Are you sure?");
+
+  if(answer){
+    combatants = [];
+    clearList();
+  }
+}
+
+function resetBoxes(){
+  clearInputs()
+  document.getElementById('nameBox').focus();
+}
+
+function startCombat(){
+
+  // So when you begin combat, it needs to have some sort of indicator who is currently is on, maybe you can turn
+  // the card green if it is their turn? or you can have an arrow pointing to whoever it is, I think the green would
+  // be a better idea though easier to see
+  // so basically every turn it should just go through the list in order turning each card green until it reaches the end
+  // once it reaches the end it should go back to the beginning and then increment the rounds, so you also need to make
+  // something that keeps track of what round it is
 }
