@@ -9,12 +9,28 @@
 // then when that turn is over it should highlight or have an arrow pointing towards the next
 // person, once it reaches the last person, it should loop around to the first person again
 
-// If a combatant dies, it should either remove them or just put some sort of indicator
-// that they are dead, there should be a button that lets you end combat too
+
+//TODO:
+// 1. Indicator for a dead combatant, maybe a slash
+// 2. Way to move to the next person in combat, needs to loop around too and increment round number
+// 3. Need to create something attached to the card where you can enter how much damage is dealt to them or just make the
+// HP they have editable or something, or make a box for damage dealt and health given maybe, so when you put a number into either box it will
+// either add the health or subtract the health
+
+
+// Need to design a function that will take in the index of a card as well as the damage taken, then it can subtract
+// this amount from whatever box you click on, so in the for loop when you create the cards, you need to also
+// give it some sort of index that can be assigned and this will make it easier later to keep track of what card to
+// subtract the health from when you want someone to take damage, MAYBE LOOK UP SOMETHING ABOUT DATASET ATTRIBUTES OR WHATEVER
 
 
 let combatants = [];
-
+let reversedArray = [];
+let combat = false;
+let numberToAppend;
+let nextElement = 1;
+let previousElement;
+let cardIndex = 0;
 
 function openModal() {
   const modal = document.getElementById('myModal');
@@ -75,10 +91,12 @@ function renderList(){
   const container = document.getElementById('combatant-list-container');
   container.innerHTML = "";
 
-  let reversedArray = combatants.reverse(); // Reverse the array so people with higher init are at the top
+  reversedArray = combatants.reverse(); // Reverse the array so people with higher init are at the top
 
   reversedArray.forEach((combatant) => {
     const card = document.createElement('div');
+    card.dataset.index = cardIndex; //MAKE SURE THIS CONVERTS FROM NUMBER TO STRING PROPERLY, JS SHOULD HANDLE IT??
+
     card.className = 'combatant-card'; /* This assigns it to the CSS class so it knows how to style it*/
     card.innerHTML = `
         <strong>${combatant.name}:</strong>
@@ -91,19 +109,21 @@ function renderList(){
   })
 }
 
-function clearList(){
+function wipeList(){
   const container = document.getElementById('combatant-list-container');
+  const roundContainer = document.getElementById('round-container');
   container.innerHTML = "";
+  roundContainer.innerHTML = '';
 }
 
-function resetCombat(){
+function clearList(){
 
   //Maybe we can make a custom one later that is not so jank but this works for now
   let answer = window.confirm("Are you sure?");
 
   if(answer){
     combatants = [];
-    clearList();
+    wipeList();
   }
 }
 
@@ -113,11 +133,83 @@ function resetBoxes(){
 }
 
 function startCombat(){
+  // Check if there is 1 person or less, if there is then you cannot have combat with 1 person
+  // Highlight the first card green, so loop through the combatants reversed list and highlight green then
+  // undo the highlight when the user goes to the next person
+  // Add the rounds tracker at the top of the screen
+  // Add an end combat button when you start combat
 
-  // So when you begin combat, it needs to have some sort of indicator who is currently is on, maybe you can turn
-  // the card green if it is their turn? or you can have an arrow pointing to whoever it is, I think the green would
-  // be a better idea though easier to see
-  // so basically every turn it should just go through the list in order turning each card green until it reaches the end
-  // once it reaches the end it should go back to the beginning and then increment the rounds, so you also need to make
-  // something that keeps track of what round it is
+  combat = true;
+
+  const roundContainer = document.createElement('div');
+  numberToAppend = 1;
+  roundContainer.id = 'round-container';
+
+  roundContainer.style.position = 'absolute';
+  roundContainer.style.textAlign = 'center';
+  roundContainer.style.marginLeft = '45%';
+  roundContainer.style.fontSize = '250%';
+  roundContainer.style.font = 'bold';
+
+  roundContainer.textContent = "Round: ";
+
+  document.body.insertBefore(roundContainer, document.body.firstChild);
+  roundContainer.textContent += numberToAppend;
+
+  revealButton("endCombatButton");
+  revealButton("nextButton");
+
+  const container = document.getElementById('combatant-list-container')
+  const firstElement = container.firstElementChild;
+  firstElement.style.backgroundColor = 'rgba(0,255,0,0.4)';
+
+}
+
+function endCombat(){
+
+  let answer = window.confirm('Are you sure?');
+  if(answer){
+    wipeList()
+    combat = false;
+    //NEED TO ADD MORE TO THIS LATER THIS JUST ASKS IF YOU ARE SURE RIGHT NOW
+  }
+
+
+}
+
+function nextCombat(){
+
+  // so while the boolean combat is true, we need to highlight the next combatant in the html to green
+  // when it reaches the end of the loop it needs to increase the round number and then reset the loop back to the beginning
+  // basically the only thing this function does is highlight whoever's turn it is then go back to the beginning when it reaches
+  // the end
+
+  const container = document.getElementById('combatant-list-container')
+  const roundContainer = document.getElementById('round-container');
+  const childElements = container.children;
+
+  previousElement = nextElement -1;
+
+  childElements[nextElement].style.backgroundColor = 'rgba(0,255,0,0.4)';
+  if(previousElement >= 0){
+    childElements[previousElement].style.backgroundColor = 'rgba(0,0,0,0)';
+  }else{
+    childElements[childElements.length - 1].style.backgroundColor = 'rgba(0,0,0,0)';
+  }
+  nextElement++;
+
+  if(nextElement === childElements.length){
+    nextElement = 0;
+  }
+  if(nextElement === 1){
+    numberToAppend++;
+    roundContainer.textContent = "Round: " + numberToAppend;
+  }
+}
+
+function revealButton(button){
+  const but = document.getElementById(button);
+  if(but){
+    but.hidden = false;
+  }
 }

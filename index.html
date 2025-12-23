@@ -16,12 +16,14 @@
   <h1>Dungeons and Dragons Combat Tracker</h1>
 
   <div class="modal-buttons">
-    <button onclick="openModal()">Begin Adding Combatants</button>
-    <button onclick="resetCombat()">Clear List</button>
+    <button onclick="openModal()">Add Combatants</button>
+    <button onclick="clearList()">Clear List</button>
   </div>
 
   <div id="startModal" class="combat-modal">
     <button onclick="startCombat()">START COMBAT</button>
+    <button id="endCombatButton" onclick="endCombat()" hidden>END COMBAT</button>
+    <button id="nextButton" onclick="nextCombat()" hidden>Next</button>
   </div>
 
   <div
