@@ -118,12 +118,18 @@ function wipeList(){
 
 function clearList(){
 
-  //Maybe we can make a custom one later that is not so jank but this works for now
-  let answer = window.confirm("Are you sure?");
+  const container = document.getElementById('combatant-list-container');
+  const childCount = container.childElementCount;
+  if (childCount === 0) {
+    alert('There is no list to clear.');
+  } else {
+    //Maybe we can make a custom one later that is not so jank but this works for now
+    let answer = window.confirm('Are you sure?');
 
-  if(answer){
-    combatants = [];
-    wipeList();
+    if (answer) {
+      combatants = [];
+      wipeList();
+    }
   }
 }
 
@@ -139,29 +145,34 @@ function startCombat(){
   // Add the rounds tracker at the top of the screen
   // Add an end combat button when you start combat
 
-  combat = true;
+  const container = document.getElementById('combatant-list-container');
+  const childCount = container.childElementCount;
+  if (childCount < 2){
+    alert("You must add at least 2 combatants before combat can start");
+  }else{
+    combat = true;
 
-  const roundContainer = document.createElement('div');
-  numberToAppend = 1;
-  roundContainer.id = 'round-container';
+    const roundContainer = document.createElement('div');
+    numberToAppend = 1;
+    roundContainer.id = 'round-container';
 
-  roundContainer.style.position = 'absolute';
-  roundContainer.style.textAlign = 'center';
-  roundContainer.style.marginLeft = '45%';
-  roundContainer.style.fontSize = '250%';
-  roundContainer.style.font = 'bold';
+    roundContainer.style.position = 'absolute';
+    roundContainer.style.textAlign = 'center';
+    roundContainer.style.marginLeft = '45%';
+    roundContainer.style.fontSize = '250%';
+    roundContainer.style.font = 'bold';
 
-  roundContainer.textContent = "Round: ";
+    roundContainer.textContent = 'Round: ';
 
-  document.body.insertBefore(roundContainer, document.body.firstChild);
-  roundContainer.textContent += numberToAppend;
+    document.body.insertBefore(roundContainer, document.body.firstChild);
+    roundContainer.textContent += numberToAppend;
 
-  revealButton("endCombatButton");
-  revealButton("nextButton");
+    revealButton('endCombatButton');
+    revealButton('nextButton');
 
-  const container = document.getElementById('combatant-list-container')
-  const firstElement = container.firstElementChild;
-  firstElement.style.backgroundColor = 'rgba(0,255,0,0.4)';
+    const firstElement = container.firstElementChild;
+    firstElement.style.backgroundColor = 'rgba(0,255,0,0.4)';
+  }
 
 }
 
@@ -171,6 +182,8 @@ function endCombat(){
   if(answer){
     wipeList()
     combat = false;
+    hideButton("endCombatButton");
+    hideButton("nextButton");
     //NEED TO ADD MORE TO THIS LATER THIS JUST ASKS IF YOU ARE SURE RIGHT NOW
   }
 
@@ -211,5 +224,12 @@ function revealButton(button){
   const but = document.getElementById(button);
   if(but){
     but.hidden = false;
+  }
+}
+
+function hideButton(button){
+  const but = document.getElementById(button);
+  if(but){
+    but.hidden = true;
   }
 }
