@@ -11,11 +11,12 @@
 
 
 //TODO:
-// 1. Indicator for a dead combatant, maybe a slash
-// 2. Way to move to the next person in combat, needs to loop around too and increment round number
-// 3. Need to create something attached to the card where you can enter how much damage is dealt to them or just make the
+// 1. Indicator for a dead combatant, maybe a slash?
+// 2. Need to create something attached to the card where you can enter how much damage is dealt to them or just make the
 // HP they have editable or something, or make a box for damage dealt and health given maybe, so when you put a number into either box it will
 // either add the health or subtract the health
+// 3. A way to use the index feature to edit certain fields that you might have missed so you do not need to clear the entire
+// list again
 
 
 // Need to design a function that will take in the index of a card as well as the damage taken, then it can subtract
@@ -25,12 +26,11 @@
 
 
 let combatants = [];
-let reversedArray = [];
 let combat = false;
 let numberToAppend;
 let nextElement = 1;
 let previousElement;
-let cardIndex = 0;
+
 
 function openModal() {
   const modal = document.getElementById('myModal');
@@ -62,9 +62,9 @@ function addCombatant(){
   const acBox = document.getElementById('acBox');
 
   let name = nameBox.value;
-  let initiative = initiativeBox.value;
-  let hp = hpBox.value;
-  let ac = acBox.value;
+  let initiative = Number(initiativeBox.value);
+  let hp = Number(hpBox.value);
+  let ac = Number(acBox.value);
 
   let nameCheck = name.trim();
 
@@ -75,12 +75,14 @@ function addCombatant(){
     const person = {
       name : name,
       initiative : initiative,
-      hp : hp,
+      maxHp : hp,
+      currentHp : hp,
       ac : ac,
     }
 
     combatants.push(person);
-    combatants.sort((a,b) => a.initiative - b.initiative);
+    combatants.sort((a,b) => b.initiative - a.initiative);
+    // By doing b.init minus a.init it sorts backwards, so highest init is first in list
     renderList();
 
     resetBoxes();
@@ -91,20 +93,50 @@ function renderList(){
   const container = document.getElementById('combatant-list-container');
   container.innerHTML = "";
 
-  reversedArray = combatants.reverse(); // Reverse the array so people with higher init are at the top
+  combatants.forEach((combatant, index) => {
 
-  reversedArray.forEach((combatant) => {
     const card = document.createElement('div');
-    card.dataset.index = cardIndex; //MAKE SURE THIS CONVERTS FROM NUMBER TO STRING PROPERLY, JS SHOULD HANDLE IT??
+    const infoBox = document.createElement('div');
+    const buttonBox = document.createElement('div');
+
+    card.dataset.index = index; //MAKE SURE THIS CONVERTS FROM NUMBER TO STRING PROPERLY, JS SHOULD HANDLE IT??
 
     card.className = 'combatant-card'; /* This assigns it to the CSS class so it knows how to style it*/
-    card.innerHTML = `
+    infoBox.className = 'info-box';
+    infoBox.innerHTML = `
         <strong>${combatant.name}:</strong>
         <span>Initiative: ${combatant.initiative}</span>
-        <span>HP: ${combatant.hp}</span>
+        <span>HP: ${combatant.currentHp} / ${combatant.maxHp}</span>
         <span>Ac: ${combatant.ac}</span>
     `;
 
+    const damageButton = document.createElement('button');
+    damageButton.className = 'damage-button';
+    damageButton.textContent = '-';
+    damageButton.style.display = 'flex'
+
+    const healthButton = document.createElement('button');
+    healthButton.className = 'health-button';
+    healthButton.textContent = '+';
+    healthButton.style.display = 'flex'
+
+    // THIS IS THE INPUT BOX IN EVERY CARD FOR HEALTH
+    const inputBox = document.createElement('input');
+    inputBox.className = 'input-box';
+    inputBox.type = 'number';
+    inputBox.style.display = 'flex';
+    inputBox.id = 'hp-input-' + index;
+
+
+    damageButton.addEventListener('click', () => takeDamage(index));
+    healthButton.addEventListener('click', () => heal(index));
+
+
+    buttonBox.appendChild(healthButton);
+    buttonBox.appendChild(inputBox);
+    buttonBox.appendChild(damageButton);
+    card.appendChild(infoBox);
+    card.appendChild(buttonBox);
     container.appendChild(card);
   })
 }
@@ -177,17 +209,11 @@ function startCombat(){
 }
 
 function endCombat(){
-
-  let answer = window.confirm('Are you sure?');
-  if(answer){
-    wipeList()
+    clearList();
     combat = false;
     hideButton("endCombatButton");
     hideButton("nextButton");
     //NEED TO ADD MORE TO THIS LATER THIS JUST ASKS IF YOU ARE SURE RIGHT NOW
-  }
-
-
 }
 
 function nextCombat(){
@@ -232,4 +258,22 @@ function hideButton(button){
   if(but){
     but.hidden = true;
   }
+}
+
+function takeDamage(index){
+
+  // Need to add it so that when they cannot go below 0 hp, and also add an option to show they are dead, maybe some sort of skull?
+
+  const input = document.getElementById('hp-input-' + index);
+  combatants[index].currentHp = combatants[index].currentHp - Number(input.value);
+  renderList();
+}
+
+function heal(index){
+
+  //Need to add a way for it to not go over the max HP, but what if they are given a spell or something that increases max hp?
+  const input = document.getElementById('hp-input-' + index);
+  combatants[index].currentHp = combatants[index].currentHp + Number(input.value);
+  renderList();
+
 }

@@ -35,9 +35,39 @@
 
 .combatant-card { /* This is for each individual combat card */
     display: flex;
+    flex-direction: row;
     justify-content: space-between;
     padding: 15px;
     border: 1px solid #ccc;
     background-color: #f9f9f9;
     border-radius: 5px;
+}
+
+.info-box{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 15px;
+    border: 1px solid #ccc;
+    background-color: #f9f9f9;
+    border-radius: 5px;
+    flex-grow: 1;
+}
+
+.damage-button {
+    display: inline-block;
+    width: 50px;
+    margin: 5px 5px 5px 15px;
+}
+
+.health-button {
+    display: inline-block;
+    width: 50px;
+    margin: 5px 5px 5px 15px;
+}
+
+.input-box {
+    display: inline-block;
+    width: 50px;
+    margin: 5px 5px 5px 15px;
 }
