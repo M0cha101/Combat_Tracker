@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
   <title>D&D Combat Tracker</title>
   <link rel="stylesheet" href="style.css">
@@ -11,20 +12,25 @@
   </style>
 </head>
 
-<body>
+<body id="body">
+
+<header id="header">
 
   <h1>Dungeons and Dragons Combat Tracker</h1>
 
   <div class="modal-buttons">
     <button onclick="openModal()">Add Combatants</button>
-    <button onclick="clearList()">Clear List</button>
+    <button onclick="endCombat()">Clear List</button>
   </div>
 
   <div id="startModal" class="combat-modal">
     <button onclick="startCombat()">START COMBAT</button>
     <button id="endCombatButton" onclick="endCombat()" hidden>END COMBAT</button>
-    <button id="nextButton" onclick="nextCombat()" hidden>Next</button>
+    <button accesskey='d' id="nextButton" onclick="nextCombat()" hidden>Next</button>
+    <button id="previousButton" onclick="prevCombat()" hidden>Prev</button>
   </div>
+
+</header>
 
   <div
     id="combatant-list-container">

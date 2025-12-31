@@ -1,6 +1,7 @@
 .modal-overlay {
     display: none;
     position: fixed;
+    z-index: 100;
     top: 0;
     left: 0;
     width: 100%;
@@ -12,6 +13,22 @@
 
 .combat-modal {
     margin-top: 15px;
+}
+
+#header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: white; /* Prevents cards from overlapping text */
+    z-index: 100;           /* Keeps it "on top" of the cards */
+    padding: 10px;
+    border-bottom: 1px solid #ccc;
+}
+
+body {
+
+    margin-top: 175px;
 }
 
 .modal-content {

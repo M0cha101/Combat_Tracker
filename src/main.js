@@ -11,12 +11,11 @@
 
 
 //TODO:
-// 1. Indicator for a dead combatant, maybe a slash?
-// 2. Need to create something attached to the card where you can enter how much damage is dealt to them or just make the
-// HP they have editable or something, or make a box for damage dealt and health given maybe, so when you put a number into either box it will
-// either add the health or subtract the health
-// 3. A way to use the index feature to edit certain fields that you might have missed so you do not need to clear the entire
-// list again
+// 1. Indicator for a dead combatant, maybe a slash, I think that maybe when their health goes below zero their card can
+// become red and then there should be an option to remove them as well, so have a button you can click where you can remove
+// the person from the list and re render
+// 2. A way to use the index feature to edit certain fields that you might have missed so you do not need to clear the entire
+// list again, or maybe its better to just add the remove feature then you can create a new combatant instead of edit one?
 
 
 // Need to design a function that will take in the index of a card as well as the damage taken, then it can subtract
@@ -27,9 +26,9 @@
 
 let combatants = [];
 let combat = false;
-let numberToAppend;
-let nextElement = 1;
-let previousElement;
+let currentIndex = 0;
+let currentRound = 1;
+let userConfirm = false;
 
 
 function openModal() {
@@ -51,10 +50,6 @@ function closeModal() {
   clearInputs()
 }
 
-
-/*
-   * Grab Data -> Create Object -> Add to List -> Sort -> Re-render.
-*/
 function addCombatant(){
   const nameBox = document.getElementById('nameBox');
   const initiativeBox = document.getElementById('initiativeBox');
@@ -122,6 +117,7 @@ function renderList(){
 
     // THIS IS THE INPUT BOX IN EVERY CARD FOR HEALTH
     const inputBox = document.createElement('input');
+    inputBox.placeholder = "Hp"
     inputBox.className = 'input-box';
     inputBox.type = 'number';
     inputBox.style.display = 'flex';
@@ -155,10 +151,11 @@ function clearList(){
   if (childCount === 0) {
     alert('There is no list to clear.');
   } else {
-    //Maybe we can make a custom one later that is not so jank but this works for now
-    let answer = window.confirm('Are you sure?');
+
+    let answer = confirm('Are you sure?');
 
     if (answer) {
+      userConfirm = true;
       combatants = [];
       wipeList();
     }
@@ -178,6 +175,7 @@ function startCombat(){
   // Add an end combat button when you start combat
 
   const container = document.getElementById('combatant-list-container');
+  const header = document.getElementById('header');
   const childCount = container.childElementCount;
   if (childCount < 2){
     alert("You must add at least 2 combatants before combat can start");
@@ -185,22 +183,24 @@ function startCombat(){
     combat = true;
 
     const roundContainer = document.createElement('div');
-    numberToAppend = 1;
     roundContainer.id = 'round-container';
 
     roundContainer.style.position = 'absolute';
     roundContainer.style.textAlign = 'center';
-    roundContainer.style.marginLeft = '45%';
+    roundContainer.style.marginLeft = '25%';
+    roundContainer.style.marginTop = '6%'
     roundContainer.style.fontSize = '250%';
     roundContainer.style.font = 'bold';
 
     roundContainer.textContent = 'Round: ';
 
-    document.body.insertBefore(roundContainer, document.body.firstChild);
-    roundContainer.textContent += numberToAppend;
+    //document.body.insertBefore(roundContainer, document.body.firstChild);
+    header.prepend(roundContainer);
+    roundContainer.textContent += currentRound;
 
     revealButton('endCombatButton');
     revealButton('nextButton');
+    revealButton("previousButton");
 
     const firstElement = container.firstElementChild;
     firstElement.style.backgroundColor = 'rgba(0,255,0,0.4)';
@@ -208,42 +208,83 @@ function startCombat(){
 
 }
 
+//Currently being used for the clearList button and the endCombat button, should we even keep the clearList button?
 function endCombat(){
     clearList();
-    combat = false;
-    hideButton("endCombatButton");
-    hideButton("nextButton");
-    //NEED TO ADD MORE TO THIS LATER THIS JUST ASKS IF YOU ARE SURE RIGHT NOW
+
+    if (userConfirm){
+      combat = false;
+      hideButton("endCombatButton");
+      hideButton("nextButton");
+      hideButton("previousButton");
+    }
+
+    userConfirm = false;
 }
 
 function nextCombat(){
 
-  // so while the boolean combat is true, we need to highlight the next combatant in the html to green
-  // when it reaches the end of the loop it needs to increase the round number and then reset the loop back to the beginning
-  // basically the only thing this function does is highlight whoever's turn it is then go back to the beginning when it reaches
-  // the end
-
-  const container = document.getElementById('combatant-list-container')
+  const container = document.getElementById('combatant-list-container');
   const roundContainer = document.getElementById('round-container');
+  const totalCombatants = container.children.length;
+
+  const oldIndex = currentIndex; // Set the old index equal to current then increment current
+
+  currentIndex++;
+
+  if (currentIndex >= totalCombatants){
+    currentIndex = 0;
+    currentRound++;
+    roundContainer.textContent = 'Round: ' + currentRound;
+  }
+
+  updateCombatantColor(oldIndex, currentIndex);
+  currentIndex.scrollIntoView();
+
+}
+
+function prevCombat(){
+
+  const container = document.getElementById('combatant-list-container');
+  const roundContainer = document.getElementById('round-container');
+  const totalCombatants = container.children.length;
+
+  const oldIndex = currentIndex;
+
+  currentIndex--;
+
+  if (currentIndex < 0){
+    currentIndex = totalCombatants - 1;
+    if (currentRound > 1){
+      currentRound--;
+      roundContainer.textContent = 'Round: ' + currentRound;
+    }
+  }
+
+  updateCombatantColor(oldIndex, currentIndex);
+}
+
+function updateCombatantColor(oldIndex, newIndex){
+
+  const container = document.getElementById('combatant-list-container');
+  const childElements = container.children;
+  const activeElement = childElements[newIndex];
+
+  childElements[oldIndex].style.backgroundColor = 'rgba(0,0,0,0)';
+  childElements[newIndex].style.backgroundColor = 'rgba(0,255,0,0.4)';
+
+  activeElement.scrollIntoView({
+    behavior: 'smooth',
+    block: 'center',
+  });
+}
+
+function updateCurrentColor(){
+
+  const container = document.getElementById('combatant-list-container');
   const childElements = container.children;
 
-  previousElement = nextElement -1;
-
-  childElements[nextElement].style.backgroundColor = 'rgba(0,255,0,0.4)';
-  if(previousElement >= 0){
-    childElements[previousElement].style.backgroundColor = 'rgba(0,0,0,0)';
-  }else{
-    childElements[childElements.length - 1].style.backgroundColor = 'rgba(0,0,0,0)';
-  }
-  nextElement++;
-
-  if(nextElement === childElements.length){
-    nextElement = 0;
-  }
-  if(nextElement === 1){
-    numberToAppend++;
-    roundContainer.textContent = "Round: " + numberToAppend;
-  }
+  childElements[currentIndex].style.backgroundColor = 'rgba(0,255,0,0.4)';
 }
 
 function revealButton(button){
@@ -267,6 +308,7 @@ function takeDamage(index){
   const input = document.getElementById('hp-input-' + index);
   combatants[index].currentHp = combatants[index].currentHp - Number(input.value);
   renderList();
+  updateCurrentColor();
 }
 
 function heal(index){
@@ -275,5 +317,6 @@ function heal(index){
   const input = document.getElementById('hp-input-' + index);
   combatants[index].currentHp = combatants[index].currentHp + Number(input.value);
   renderList();
+  updateCurrentColor();
 
 }
