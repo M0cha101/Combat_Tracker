@@ -20,14 +20,13 @@
     top: 0;
     left: 0;
     width: 100%;
-    background-color: white; /* Prevents cards from overlapping text */
-    z-index: 100;           /* Keeps it "on top" of the cards */
+    background-color: white;
+    z-index: 100;
     padding: 10px;
     border-bottom: 1px solid #ccc;
 }
 
-body {
-
+#body {
     margin-top: 175px;
 }
 
@@ -63,12 +62,18 @@ body {
 .info-box{
     display: flex;
     flex-direction: row;
+    flex-wrap: wrap;
     justify-content: space-between;
     padding: 15px;
     border: 1px solid #ccc;
     background-color: #f9f9f9;
     border-radius: 5px;
     flex-grow: 1;
+}
+
+.dead {
+    flex-basis: 100%;
+
 }
 
 .damage-button {

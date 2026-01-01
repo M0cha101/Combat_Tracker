@@ -16,6 +16,8 @@
 // the person from the list and re render
 // 2. A way to use the index feature to edit certain fields that you might have missed so you do not need to clear the entire
 // list again, or maybe its better to just add the remove feature then you can create a new combatant instead of edit one?
+// 3. Remove card feature
+// 4. Make it so hp cannot go past 0, maybe it can be over max hp though since weird spells idk
 
 
 // Need to design a function that will take in the index of a card as well as the damage taken, then it can subtract
@@ -60,6 +62,13 @@ function addCombatant(){
   let initiative = Number(initiativeBox.value);
   let hp = Number(hpBox.value);
   let ac = Number(acBox.value);
+
+  if(ac === 0){
+    ac = '';
+  }
+  if(hp === 0){
+    hp = '';
+  }
 
   let nameCheck = name.trim();
 
@@ -123,6 +132,30 @@ function renderList(){
     inputBox.style.display = 'flex';
     inputBox.id = 'hp-input-' + index;
 
+    const removeButton = document.createElement('button');
+    removeButton.className = 'remove-button';
+    removeButton.textContent = 'Delete';
+    removeButton.style.display = 'flex';
+    removeButton.style.marginLeft = '15px';
+    removeButton.style.marginTop = '15px';
+
+    const dead = document.createElement('div');
+    dead.id = 'dead-' + index;
+    dead.className = 'dead';
+    dead.textContent = 'DEAD';
+    dead.style.display = 'inline-block';
+    dead.style.marginTop = '25px';
+    dead.style.flexDirection = 'column';
+    dead.style.fontSize = '40px';
+    dead.style.visibility = 'hidden';
+    dead.style.bold = true;
+    dead.style.color = 'red';
+
+    if (combatant.currentHp === ''){
+      dead.style.visibility = 'hidden';
+    }
+
+
 
     damageButton.addEventListener('click', () => takeDamage(index));
     healthButton.addEventListener('click', () => heal(index));
@@ -131,8 +164,13 @@ function renderList(){
     buttonBox.appendChild(healthButton);
     buttonBox.appendChild(inputBox);
     buttonBox.appendChild(damageButton);
+    buttonBox.appendChild(removeButton);
+
+    infoBox.appendChild(dead);
+
     card.appendChild(infoBox);
     card.appendChild(buttonBox);
+
     container.appendChild(card);
   })
 }
@@ -155,7 +193,7 @@ function clearList(){
     let answer = confirm('Are you sure?');
 
     if (answer) {
-      userConfirm = true;
+      userConfirm = true; //Needed?
       combatants = [];
       wipeList();
     }
@@ -249,6 +287,11 @@ function prevCombat(){
   const roundContainer = document.getElementById('round-container');
   const totalCombatants = container.children.length;
 
+  if(currentRound === 1 && currentIndex === 0){
+    alert("You cannot go back any further.")
+    return;
+  }
+
   const oldIndex = currentIndex;
 
   currentIndex--;
@@ -287,10 +330,26 @@ function updateCurrentColor(){
   childElements[currentIndex].style.backgroundColor = 'rgba(0,255,0,0.4)';
 }
 
+
 function revealButton(button){
   const but = document.getElementById(button);
   if(but){
     but.hidden = false;
+  }
+}
+
+function revealDead(index){
+
+  const deadElement = document.getElementById(`dead-${index}`);
+  if(deadElement){
+    deadElement.style.visibility = 'visible';
+  }
+}
+
+function hideDead(index){
+  const deadElement = document.getElementById(`dead-${index}`);
+  if(deadElement){
+    deadElement.style.visibility = 'hidden';
   }
 }
 
@@ -305,13 +364,27 @@ function takeDamage(index){
 
   // Need to add it so that when they cannot go below 0 hp, and also add an option to show they are dead, maybe some sort of skull?
 
+  if(!combat){
+    alert("You cannot take damage outside of combat.")
+    return;
+  }
+
   const input = document.getElementById('hp-input-' + index);
   combatants[index].currentHp = combatants[index].currentHp - Number(input.value);
   renderList();
   updateCurrentColor();
+
+  if (combatants[index].currentHp <= 0){
+    revealDead(index);
+  }
 }
 
 function heal(index){
+
+  if (!combat) {
+    alert('You cannot heal outside of combat.');
+    return;
+  }
 
   //Need to add a way for it to not go over the max HP, but what if they are given a spell or something that increases max hp?
   const input = document.getElementById('hp-input-' + index);
@@ -319,4 +392,7 @@ function heal(index){
   renderList();
   updateCurrentColor();
 
+  if (combatants[index].currentHp > 0){
+    hideDead(index);
+  }
 }
