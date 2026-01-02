@@ -82,6 +82,7 @@ function addCombatant(){
     combatants.sort((a,b) => b.initiative - a.initiative);
     // By doing b.init minus a.init it sorts backwards, so highest init is first in list
     renderList();
+    updateCurrentColor();
 
     resetBoxes();
   }
