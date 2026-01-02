@@ -11,13 +11,7 @@
 
 
 //TODO:
-// 1. Indicator for a dead combatant, maybe a slash, I think that maybe when their health goes below zero their card can
-// become red and then there should be an option to remove them as well, so have a button you can click where you can remove
-// the person from the list and re render
-// 2. A way to use the index feature to edit certain fields that you might have missed so you do not need to clear the entire
-// list again, or maybe its better to just add the remove feature then you can create a new combatant instead of edit one?
 // 3. Remove card feature
-// 4. Make it so hp cannot go past 0, maybe it can be over max hp though since weird spells idk
 
 
 // Need to design a function that will take in the index of a card as well as the damage taken, then it can subtract
@@ -132,12 +126,12 @@ function renderList(){
     inputBox.style.display = 'flex';
     inputBox.id = 'hp-input-' + index;
 
-    const removeButton = document.createElement('button');
-    removeButton.className = 'remove-button';
-    removeButton.textContent = 'Delete';
-    removeButton.style.display = 'flex';
-    removeButton.style.marginLeft = '15px';
-    removeButton.style.marginTop = '15px';
+    const deleteButton = document.createElement('button');
+    deleteButton.className = 'delete-button';
+    deleteButton.textContent = 'Delete';
+    deleteButton.style.display = 'flex';
+    deleteButton.style.marginLeft = '15px';
+    deleteButton.style.marginTop = '15px';
 
     const dead = document.createElement('div');
     dead.id = 'dead-' + index;
@@ -147,11 +141,10 @@ function renderList(){
     dead.style.marginTop = '25px';
     dead.style.flexDirection = 'column';
     dead.style.fontSize = '40px';
-    dead.style.visibility = 'hidden';
     dead.style.bold = true;
     dead.style.color = 'red';
 
-    if (combatant.currentHp === ''){
+    if (combatant.currentHp === '' || combatant.currentHp > 0){
       dead.style.visibility = 'hidden';
     }
 
@@ -159,12 +152,13 @@ function renderList(){
 
     damageButton.addEventListener('click', () => takeDamage(index));
     healthButton.addEventListener('click', () => heal(index));
+    deleteButton.addEventListener('click', () => deleteCard(index));
 
 
     buttonBox.appendChild(healthButton);
     buttonBox.appendChild(inputBox);
     buttonBox.appendChild(damageButton);
-    buttonBox.appendChild(removeButton);
+    buttonBox.appendChild(deleteButton);
 
     infoBox.appendChild(dead);
 
@@ -340,6 +334,8 @@ function revealButton(button){
 
 function revealDead(index){
 
+  // Need to fix this so that the DEAD label stays after you re-render the list, so multiple people can
+  // be dead at the same time
   const deadElement = document.getElementById(`dead-${index}`);
   if(deadElement){
     deadElement.style.visibility = 'visible';
@@ -362,21 +358,26 @@ function hideButton(button){
 
 function takeDamage(index){
 
-  // Need to add it so that when they cannot go below 0 hp, and also add an option to show they are dead, maybe some sort of skull?
-
   if(!combat){
     alert("You cannot take damage outside of combat.")
     return;
   }
 
   const input = document.getElementById('hp-input-' + index);
-  combatants[index].currentHp = combatants[index].currentHp - Number(input.value);
+  let newHp = combatants[index].currentHp - Number(input.value);
+
+  if (newHp < 0){
+    combatants[index].currentHp = 0;
+  }else{
+    combatants[index].currentHp = newHp;
+  }
   renderList();
   updateCurrentColor();
 
-  if (combatants[index].currentHp <= 0){
+  if (Number(combatants[index].currentHp) <= 0){
     revealDead(index);
   }
+
 }
 
 function heal(index){
@@ -395,4 +396,16 @@ function heal(index){
   if (combatants[index].currentHp > 0){
     hideDead(index);
   }
+
+}
+
+function deleteCard(index){
+
+  let answer = confirm('Are you sure?');
+
+  if(answer){
+    combatants.splice(index, 1);
+    renderList();
+  }
+
 }
