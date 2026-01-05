@@ -40,16 +40,16 @@
     margin-top: 5px;
 }
 
-#combatant-list-container { /* This is the class for the container */
+#combatant-list-container {
     margin-top: 20px;
     display: flex;
     flex-direction: column; /* Vertically */
-    gap: 10px;              /* Space between each person */
+    gap: 10px;
     width: 100%;
-    max-width: 600px;       /* Keeps the list from getting too wide */
+    max-width: 600px;
 }
 
-.combatant-card { /* This is for each individual combat card */
+.combatant-card {
     display: flex;
     flex-direction: row;
     justify-content: space-between;

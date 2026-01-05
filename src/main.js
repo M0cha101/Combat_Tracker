@@ -1,25 +1,3 @@
-// I want the combat tracker to basically load up and welcome you to the tracker
-// Then it will prompt you to enter all the combatants and I guess each person will
-// just have a name/HP/Initiative(Maybe condition as well or speed, but name/HP/Init for sure)
-// once you are done entering the name and HP that person will be placed onto the screen
-// displaying their information, if a person has a higher initiative then they should
-// go at the top, when you enter another character it should know where it goes within
-// the other combatants, then it will allow you to start combat, so it should start at
-// the first person, you should be able to change their hp and condition or whatever
-// then when that turn is over it should highlight or have an arrow pointing towards the next
-// person, once it reaches the last person, it should loop around to the first person again
-
-
-//TODO:
-// 3. Remove card feature
-
-
-// Need to design a function that will take in the index of a card as well as the damage taken, then it can subtract
-// this amount from whatever box you click on, so in the for loop when you create the cards, you need to also
-// give it some sort of index that can be assigned and this will make it easier later to keep track of what card to
-// subtract the health from when you want someone to take damage, MAYBE LOOK UP SOMETHING ABOUT DATASET ATTRIBUTES OR WHATEVER
-
-
 let combatants = [];
 let combat = false;
 let currentIndex = 0;
@@ -66,7 +44,6 @@ function addCombatant(){
 
   let nameCheck = name.trim();
 
-  //Maybe could check to make sure that the init,hp, and AC are numbers as well?
   if (nameCheck === ""){
     alert("Please enter a name");
   } else{
@@ -97,7 +74,7 @@ function renderList(){
     const infoBox = document.createElement('div');
     const buttonBox = document.createElement('div');
 
-    card.dataset.index = index; //MAKE SURE THIS CONVERTS FROM NUMBER TO STRING PROPERLY, JS SHOULD HANDLE IT??
+    card.dataset.index = index;
 
     card.className = 'combatant-card'; /* This assigns it to the CSS class so it knows how to style it*/
     infoBox.className = 'info-box';
@@ -118,7 +95,6 @@ function renderList(){
     healthButton.textContent = '+';
     healthButton.style.display = 'flex'
 
-    // THIS IS THE INPUT BOX IN EVERY CARD FOR HEALTH
     const inputBox = document.createElement('input');
     inputBox.placeholder = "Hp"
     inputBox.className = 'input-box';
@@ -200,12 +176,6 @@ function resetBoxes(){
 }
 
 function startCombat(){
-  // Check if there is 1 person or less, if there is then you cannot have combat with 1 person
-  // Highlight the first card green, so loop through the combatants reversed list and highlight green then
-  // undo the highlight when the user goes to the next person
-  // Add the rounds tracker at the top of the screen
-  // Add an end combat button when you start combat
-
   const container = document.getElementById('combatant-list-container');
   const header = document.getElementById('header');
   const childCount = container.childElementCount;
@@ -226,7 +196,6 @@ function startCombat(){
 
     roundContainer.textContent = 'Round: ';
 
-    //document.body.insertBefore(roundContainer, document.body.firstChild);
     header.prepend(roundContainer);
     roundContainer.textContent += currentRound;
 
@@ -240,7 +209,6 @@ function startCombat(){
 
 }
 
-//Currently being used for the clearList button and the endCombat button, should we even keep the clearList button?
 function endCombat(){
     clearList();
 
@@ -260,7 +228,7 @@ function nextCombat(){
   const roundContainer = document.getElementById('round-container');
   const totalCombatants = container.children.length;
 
-  const oldIndex = currentIndex; // Set the old index equal to current then increment current
+  const oldIndex = currentIndex;
 
   currentIndex++;
 
@@ -334,8 +302,6 @@ function revealButton(button){
 
 function revealDead(index){
 
-  // Need to fix this so that the DEAD label stays after you re-render the list, so multiple people can
-  // be dead at the same time
   const deadElement = document.getElementById(`dead-${index}`);
   if(deadElement){
     deadElement.style.visibility = 'visible';
@@ -387,7 +353,6 @@ function heal(index){
     return;
   }
 
-  //Need to add a way for it to not go over the max HP, but what if they are given a spell or something that increases max hp?
   const input = document.getElementById('hp-input-' + index);
   combatants[index].currentHp = combatants[index].currentHp + Number(input.value);
   renderList();
