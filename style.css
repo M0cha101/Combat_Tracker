@@ -1,3 +1,5 @@
+
+
 .modal-overlay {
     display: none;
     position: fixed;
@@ -92,4 +94,14 @@
     display: inline-block;
     width: 50px;
     margin: 5px 5px 5px 15px;
+}
+
+.round-container {
+    /* No more absolute positioning! */
+    width: 100%;             /* Allows it to be flexible */
+    max-width: 500px;        /* Limits how big it gets on giant monitors */
+
+    background: white;
+    border-radius: 25px;
+    padding: 10px 20px;
 }

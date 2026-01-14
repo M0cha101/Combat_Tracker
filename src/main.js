@@ -188,15 +188,15 @@ function startCombat(){
     roundContainer.id = 'round-container';
 
     roundContainer.style.position = 'absolute';
-    roundContainer.style.textAlign = 'center';
     roundContainer.style.marginLeft = '25%';
-    roundContainer.style.marginTop = '6%'
+    roundContainer.style.top = '10px';
+    roundContainer.style.right = '50px';
     roundContainer.style.fontSize = '250%';
     roundContainer.style.font = 'bold';
 
     roundContainer.textContent = 'Round: ';
 
-    header.prepend(roundContainer);
+    header.append(roundContainer);
     roundContainer.textContent += currentRound;
 
     revealButton('endCombatButton');
